@@ -10,51 +10,15 @@ jobs:
     name: Export Security Findings
     runs-on: ubuntu-latest
     steps:
-      - name: Download vulnerability issues
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          PROJECT_KEY="bounce-security_webgoat-06c0be2"
-          BASE_URL="https://sonarcloud.io/api/issues/search"
-          PAGE=1
-          PAGE_SIZE=500
-          mkdir -p reports
-
-          while true; do
-            echo "Fetching issues page $PAGE..."
-            HTTP_CODE=$(curl -s -w "%{http_code}" -o "reports/issues_page_${PAGE}.json" \
-              -u "${SONAR_TOKEN}:" \
-              "${BASE_URL}?componentKeys=${PROJECT_KEY}&types=VULNERABILITY&ps=${PAGE_SIZE}&p=${PAGE}&additionalFields=comments,rules")
-
-            if [ "$HTTP_CODE" -ne 200 ]; then
-              echo "Error: API returned HTTP $HTTP_CODE"
-              cat "reports/issues_page_${PAGE}.json"
-              exit 1
-            fi
-
-            TOTAL=$(jq '.paging.total' "reports/issues_page_${PAGE}.json")
-            echo "Page $PAGE fetched. Total issues: $TOTAL"
-
-            if [ $((PAGE * PAGE_SIZE)) -ge "$TOTAL" ]; then
-              break
-            fi
-            PAGE=$((PAGE + 1))
-          done
-
-          # Merge all pages into a single file
-          jq -s '{
-            total: .[0].paging.total,
-            issues: [.[].issues[]] ,
-            components: ([.[].components[]] | unique_by(.key)),
-            rules: ([.[].rules // [] | .[]] | unique_by(.key))
-          }' reports/issues_page_*.json > reports/vulnerabilities.json
-
-          echo "Total vulnerabilities exported: $(jq '.total' reports/vulnerabilities.json)"
-
       - name: Checkout scripts
         uses: actions/checkout@v4
         with:
           sparse-checkout: .github/scripts
+
+      - name: Download vulnerability issues
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: node .github/scripts/download-issues.js reports
 
       - name: Convert to CSV
         run: node .github/scripts/convert-to-csv.js reports/vulnerabilities.json
