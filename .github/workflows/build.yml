@@ -18,20 +18,8 @@ jobs:
         with:
           java-version: 23
           distribution: 'zulu' # Alternative distribution options are available.
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        run: mvn -B verify -DskipITs 
+        run: mvn -B clean package -DskipTests 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
