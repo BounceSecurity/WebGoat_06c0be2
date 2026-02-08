@@ -33,9 +33,5 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        # Runs SonarQube analysis with Maven, skipping tests and specifying source directories so that it will scan Javascript files as well
         run: mvn -B clean package -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=bounce-security_webgoat-06c0be2 -Dsonar.sources=src/main/java,src/main/resources
-      #  run: mvn -B clean package -DskipTests 
-      #- name: SonarQube Scan
-      #  uses: SonarSource/sonarqube-scan-action@v6
-      #  env:
-      #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
