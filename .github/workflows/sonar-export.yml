@@ -2,14 +2,20 @@ name: Export SonarCloud Security Findings
 
 on:
   workflow_dispatch:
-  push:
-    branches: 'main'
+  workflow_run:
+    workflows: ["SonarQube"]
+    types: [completed]
 
 jobs:
   export-findings:
     name: Export Security Findings
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Wait for SonarCloud to process results
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: sleep 20
+
       - name: Checkout scripts
         uses: actions/checkout@v4
         with:
