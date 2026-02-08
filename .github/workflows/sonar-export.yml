@@ -2,6 +2,8 @@ name: Export SonarCloud Security Findings
 
 on:
   workflow_dispatch:
+  push:
+    branches: 'main'
 
 jobs:
   export-findings:
