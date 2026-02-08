@@ -51,9 +51,20 @@ jobs:
 
           echo "Total vulnerabilities exported: $(jq '.total' reports/vulnerabilities.json)"
 
+      - name: Checkout scripts
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: Convert to CSV
+        run: node .github/scripts/convert-to-csv.js reports/vulnerabilities.json
+
       - name: Upload security findings report
         uses: actions/upload-artifact@v4
         with:
           name: sonarcloud-security-findings
-          path: reports/vulnerabilities.json
+          path: |
+            reports/vulnerabilities.json
+            reports/issues.csv
+            reports/flows.csv
           retention-days: 30
