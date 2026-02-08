@@ -2,8 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-<!--Change hash 1-->
-
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -63,7 +61,6 @@
   </issueManagement>
 
   <properties>
-
     <!-- Shared properties with plugins and version numbers across submodules-->
     <asciidoctorj.version>3.0.0</asciidoctorj.version>
     <bootstrap.version>5.3.5</bootstrap.version>
